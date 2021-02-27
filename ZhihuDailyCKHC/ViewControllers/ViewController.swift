@@ -5,42 +5,60 @@
 //  Created by CHEUNG Kog-hin Corson on 2021/2/1.
 //
 
-import SwiftUI
 import UIKit
+import SafariServices
 
 class ViewController: UIViewController,
                       UITableViewDelegate, UITableViewDataSource,
-                      UICollectionViewDelegate, UICollectionViewDataSource,
-                      ModelDelegate {
+                      FeedModelDelegate {
     
-    var tableView: UITableView!
+    private lazy var headerView: UIView = {
+       let v = HeaderView(fontSize: 32)
+        return v
+    }()
+    
+    private lazy var tableView: UITableView = {
+        let v = UITableView()
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.tableFooterView = UIView()
+        v.register(StoryTableViewCell.self, forCellReuseIdentifier: Constants.STORYCELL_ID)
+        v.dataSource = self
+        v.delegate = self
+        return v
+    }()
+    
     var cell: StoryTableViewCell!
-    var collectionView: UICollectionView!
     var model = Model()
-    var stories = [Story]()
+    var stories = [StoryInformation]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView = UITableView(frame: Constants.SCREEN, style: .grouped)
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.tableHeaderView = headerView()
-        tableView.register(StoryTableViewCell.self, forCellReuseIdentifier: Constants.STORYCELL_ID)
-        view.addSubview(tableView)
+        model.feedModelDelegate = self
         
-        collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout())
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.register(FeedPagerCollectionViewCell.self, forCellWithReuseIdentifier: Constants.PAGINGCELL_ID)
-        view.addSubview(collectionView)
-        
-        model.delegate = self
-        model.getStory()
+        setupView()
+        model.getLatestFeed()
     }
-    // MARK: - Model Methods
     
-    func storiesFetched(_ stories: [Story]) {
+    func setupView() {
+        view.backgroundColor = .white
+        view.addSubview(headerView)
+        view.addSubview(tableView)
+        setupConstraints()
+    }
+    func setupConstraints() {
+        NSLayoutConstraint.activate([
+            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 8),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    // MARK: - Model Delegate Methods
+    
+    func FeedFetched(_ stories: [StoryInformation]) {
         self.stories = stories
         tableView.reloadData()
     }
@@ -61,46 +79,10 @@ class ViewController: UIViewController,
         tableView.deselectRow(at: indexPath, animated: true)
         let detailPage = DetailViewController()
         guard tableView.indexPathForSelectedRow != nil else { return }
-        let selectedStory = stories[tableView.indexPathForSelectedRow!.row]
-        detailPage.story = selectedStory
+        let selectedContentId = stories[tableView.indexPathForSelectedRow!.row].storyId
+        detailPage.selectedContentId = selectedContentId
         self.navigationController?.pushViewController(detailPage, animated: true)
     }
     
-    private func headerView() -> UIView {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 300))
-        view.backgroundColor = .blue
-        return view
-    }
-    
-    // MARK: - CollectionView Methods
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int { 5 }
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.PAGINGCELL_ID, for: indexPath)
-        cell.backgroundColor = .red
-        return cell
-    }
-
-    func createLayout() -> UICollectionViewCompositionalLayout {
-        let item = NSCollectionLayoutItem(
-            layoutSize: .init(
-                widthDimension: .fractionalWidth(1),
-                heightDimension: .fractionalHeight(1)
-            )
-        )
-        item.contentInsets.leading = 2
-        item.contentInsets.trailing = 2
-        item.contentInsets.bottom = 16
-        let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: .init(
-                widthDimension: .fractionalWidth(1),
-                heightDimension: .absolute(300)
-            ),
-            subitems: [item]
-        )
-        let section = NSCollectionLayoutSection(group: group)
-        section.orthogonalScrollingBehavior = .paging
-        return UICollectionViewCompositionalLayout(section: section)
-    }
 }
 

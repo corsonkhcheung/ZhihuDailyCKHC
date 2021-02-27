@@ -9,7 +9,8 @@ import Foundation
 
 struct Response: Codable {
     let date: String?
-    let stories, topStories: [Story]?
+    let stories: [StoryInformation]?
+    let topStories: [StoryInformation]?
 
     enum CodingKeys: String, CodingKey {
         case date, stories
@@ -19,13 +20,13 @@ struct Response: Codable {
     init (from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.stories = try container.decode([Story].self, forKey: .stories)
-        self.topStories = try container.decode([Story].self,forKey: .topStories)
+        self.stories = try container.decode([StoryInformation].self, forKey: .stories) // 跑完这一行直接回到了init那一行，并且在Model那里进入了catch，估计就是在这里throw了某种error
+        self.topStories = try container.decode([StoryInformation].self,forKey: .topStories)
         self.date = try container.decode(String.self,forKey: .date)
     }
 }
 
-struct Story: Codable {
+struct StoryInformation: Codable {
     let imageHue, title: String?
     let url: String?
     let hint, gaPrefix: String?
@@ -51,8 +52,8 @@ struct Story: Codable {
         self.imageHue = try container.decode(String.self, forKey: .imageHue)
         self.hint = try container.decode(String.self,forKey: .hint)
         self.gaPrefix = try container.decode(String.self, forKey: .gaPrefix)
-        self.images = try container.decode([String].self,forKey: .images)
+        self.images = try container.decode([String].self,forKey: .images) //在这里报错nw_protocol_get_quic_image_block_invoke dlopen libquic failed
         self.type = try container.decode(Int.self,forKey: .type)
-        self.image = try container.decode(String.self,forKey: .image)
+        self.image = try container.decode(String.self,forKey: .image) //所谓CodingKey没有对应value估计讲的就是这一行，然而JSON里面是有值的
     }
 }

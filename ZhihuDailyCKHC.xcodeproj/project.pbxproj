@@ -11,7 +11,9 @@
 		7419612925C7FA5A005E6E58 /* Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7419612825C7FA5A005E6E58 /* Content.swift */; };
 		7419617425C93216005E6E58 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7419617325C93216005E6E58 /* Model.swift */; };
 		7419617D25C94BC2005E6E58 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7419617C25C94BC2005E6E58 /* Response.swift */; };
-		74BE5FBD25E7A2AF00A45A69 /* FeedPagerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74BE5FBC25E7A2AF00A45A69 /* FeedPagerCollectionViewCell.swift */; };
+		74642DED25EA977000B078B7 /* ShadowImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74642DEC25EA977000B078B7 /* ShadowImageView.swift */; };
+		74642E0025EAA96100B078B7 /* FeedPagerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74642DFF25EAA96100B078B7 /* FeedPagerCollectionViewCell.swift */; };
+		74BE5FBD25E7A2AF00A45A69 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74BE5FBC25E7A2AF00A45A69 /* HeaderView.swift */; };
 		74CAD2432560C9C000EE111D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74CAD2422560C9C000EE111D /* AppDelegate.swift */; };
 		74CAD2452560C9C000EE111D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74CAD2442560C9C000EE111D /* SceneDelegate.swift */; };
 		74CAD2472560C9C000EE111D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74CAD2462560C9C000EE111D /* ViewController.swift */; };
@@ -49,7 +51,9 @@
 		7419612825C7FA5A005E6E58 /* Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Content.swift; sourceTree = "<group>"; };
 		7419617325C93216005E6E58 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		7419617C25C94BC2005E6E58 /* Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
-		74BE5FBC25E7A2AF00A45A69 /* FeedPagerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPagerCollectionViewCell.swift; sourceTree = "<group>"; };
+		74642DEC25EA977000B078B7 /* ShadowImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowImageView.swift; sourceTree = "<group>"; };
+		74642DFF25EAA96100B078B7 /* FeedPagerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPagerCollectionViewCell.swift; sourceTree = "<group>"; };
+		74BE5FBC25E7A2AF00A45A69 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		74CAD23F2560C9C000EE111D /* ZhihuDailyCKHC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZhihuDailyCKHC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		74CAD2422560C9C000EE111D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		74CAD2442560C9C000EE111D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -201,7 +205,9 @@
 			isa = PBXGroup;
 			children = (
 				74D86D4225DBD61000E4A20F /* StoryTableViewCell.swift */,
-				74BE5FBC25E7A2AF00A45A69 /* FeedPagerCollectionViewCell.swift */,
+				74642DFF25EAA96100B078B7 /* FeedPagerCollectionViewCell.swift */,
+				74BE5FBC25E7A2AF00A45A69 /* HeaderView.swift */,
+				74642DEC25EA977000B078B7 /* ShadowImageView.swift */,
 				74D86D5E25DBDA8900E4A20F /* TestAsset */,
 			);
 			path = Views;
@@ -355,10 +361,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				7419617425C93216005E6E58 /* Model.swift in Sources */,
-				74BE5FBD25E7A2AF00A45A69 /* FeedPagerCollectionViewCell.swift in Sources */,
+				74642DED25EA977000B078B7 /* ShadowImageView.swift in Sources */,
+				74BE5FBD25E7A2AF00A45A69 /* HeaderView.swift in Sources */,
 				74D86D5225DBD80A00E4A20F /* CacheManager.swift in Sources */,
 				7419612425C7F86C005E6E58 /* Constants.swift in Sources */,
 				7419612925C7FA5A005E6E58 /* Content.swift in Sources */,
+				74642E0025EAA96100B078B7 /* FeedPagerCollectionViewCell.swift in Sources */,
 				74CAD2472560C9C000EE111D /* ViewController.swift in Sources */,
 				74CAD2432560C9C000EE111D /* AppDelegate.swift in Sources */,
 				74CAD2452560C9C000EE111D /* SceneDelegate.swift in Sources */,

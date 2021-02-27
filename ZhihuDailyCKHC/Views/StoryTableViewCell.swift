@@ -8,21 +8,51 @@
 import UIKit
 
 class StoryTableViewCell: UITableViewCell {
-
-    var thumbnailImageView = UIImageView(frame: CGRect(x: 5, y: 5, width: Constants.SCREEN.width - 10 , height: 50))
-    var titleLabel = UILabel(frame: CGRect(x: 5, y: 55, width: Constants.SCREEN.width - 10, height: 10))
-//    var dateLabel = UILabel(frame: CGRect(x: 5, y: 65, width: Constants.SCREEN.width - 10, height: 10))
-    var story: Story?
+    
+    private lazy var thumbnailImageView: UIImageView = {
+        let v = UIImageView()
+        v.translatesAutoresizingMaskIntoConstraints = false
+        return v
+    }()
+    
+    private lazy var titleLabel: UILabel = {
+       let v = UILabel()
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.numberOfLines = 0
+        return v
+    }()
+        
+    var story: StoryInformation?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.addSubview(thumbnailImageView)
-        contentView.addSubview(titleLabel)
-//        contentView.addSubview(dateLabel)
+        selectionStyle = .none
+        setupView()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupView() {
+        addSubview(titleLabel)
+        addSubview(thumbnailImageView)
+        setupConstraints()
+    }
+    
+    func setupConstraints() {
+        NSLayoutConstraint.activate([
+            
+            thumbnailImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            thumbnailImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            thumbnailImageView.topAnchor.constraint(equalTo: topAnchor),
+            thumbnailImageView.heightAnchor.constraint(equalToConstant: 200),
+            
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 16),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor,constant: -16),
+            titleLabel.topAnchor.constraint(equalTo: thumbnailImageView.bottomAnchor,constant: 8),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor,constant: -16)
+        ])
     }
     
     override func awakeFromNib() {
@@ -32,39 +62,36 @@ class StoryTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
-    func SetUpCell(_ s:Story?) {
+    func SetUpCell(_ s:StoryInformation?) {
         
         self.story = s
-        
         guard story != nil else { return }
         
-        self.titleLabel.text = story?.title
+        // MARK: - Setup Title for TableViewCell
+        self.titleLabel.text = story?.title ?? "标题缺失"
         
-//        let converter = DateFormatter()
-//        converter.dateFormat = "yyyymmdd"
-//        self.dateLabel.text = response!.date
+        // MARK: - Setup Image for TableViewCell
         
-        guard self.story!.image != "" else { return }
-
-        if let cachedData = CacheManager.getStoryCache(self.story!.image ?? "") {
+        guard self.story!.images?[0] != "" else { return }
+        if let cachedData = CacheManager.getStoryCache(self.story!.images?[0] ?? "") {
             self.thumbnailImageView.image = UIImage(data: cachedData)
-            return
         }
-
-        let url = URL(string: self.story!.image ?? "")
+        let url = URL(string: self.story!.images?[0] ?? "https://www.notion.so/corsoncheung/97416469544f4c398415b160cd685394#ae76aac48a5a43328b8da2e1b3851bc7")
         let session = URLSession.shared
         let dataTask = session.dataTask(with: url!) { (data, response, error) in
 
             if error == nil && data != nil {
                 CacheManager.setStoryCache(url!.absoluteString, data)
-                if url!.absoluteString != self.story?.image { return }
+                if url!.absoluteString != self.story?.images?[0] { return }
                 let image = UIImage(data: data!)
-                DispatchQueue.main.async { self.thumbnailImageView.image = image }
+                DispatchQueue.main.async {
+                    self.thumbnailImageView.image = image
+                }
 
             }
         }
         dataTask.resume()
+        
     }
 
 }
-
