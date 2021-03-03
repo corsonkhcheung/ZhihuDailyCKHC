@@ -12,15 +12,11 @@ class ViewController: UIViewController,
                       UITableViewDelegate, UITableViewDataSource,
                       FeedModelDelegate {
     
-    private lazy var headerView: UIView = {
-       let v = HeaderView(fontSize: 32)
-        return v
-    }()
+    public lazy var headerView = HeaderView()
     
     private lazy var tableView: UITableView = {
         let v = UITableView()
         v.translatesAutoresizingMaskIntoConstraints = false
-        v.tableFooterView = UIView()
         v.register(StoryTableViewCell.self, forCellReuseIdentifier: Constants.STORYCELL_ID)
         v.dataSource = self
         v.delegate = self
@@ -31,6 +27,11 @@ class ViewController: UIViewController,
     var model = Model()
     var stories = [StoryInformation]()
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -40,19 +41,28 @@ class ViewController: UIViewController,
         model.getLatestFeed()
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: true)
+    }
+    
     func setupView() {
         view.backgroundColor = .white
-        view.addSubview(headerView)
+//        view.addSubview(headerView)
         view.addSubview(tableView)
         setupConstraints()
     }
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            
+//            headerView.leadingAnchor.constraint(equalTo: tableView.leadingAnchor, constant: 16),
+//            headerView.trailingAnchor.constraint(equalTo: tableView.trailingAnchor,constant: -16),
+//            headerView.topAnchor.constraint(equalTo: tableView.safeAreaLayoutGuide.topAnchor, constant: 10),
+//            headerView.heightAnchor.constraint(equalToConstant: Constants.SCREEN.width + 100),
+            
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 8),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
@@ -75,14 +85,38 @@ class ViewController: UIViewController,
         cell.textLabel?.text = title
         return cell
     }
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let v = UIView(frame: CGRect(origin: CGPoint(x: Constants.SCREEN.width / 2, y: 0),size: CGSize(width: Constants.SCREEN.width, height: Constants.SCREEN.width + 100)))
+        v.setNeedsLayout()
+        v.layoutIfNeeded()
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.addSubview(headerView)
+        NSLayoutConstraint.activate([
+            headerView.leadingAnchor.constraint(equalTo: v.leadingAnchor, constant: 16),
+            headerView.trailingAnchor.constraint(equalTo: v.trailingAnchor,constant: -16),
+            headerView.topAnchor.constraint(equalTo: v.topAnchor, constant: 10),
+            headerView.bottomAnchor.constraint(equalTo: v.bottomAnchor,constant: -10)
+        ])
+        return v
+    }
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        Constants.SCREEN.width + 50
+    }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
         let detailPage = DetailViewController()
         guard tableView.indexPathForSelectedRow != nil else { return }
         let selectedContentId = stories[tableView.indexPathForSelectedRow!.row].storyId
         detailPage.selectedContentId = selectedContentId
         self.navigationController?.pushViewController(detailPage, animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
-    
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        let content: Content?
+//        guard tableView.indexPathForSelectedRow != nil else { return }
+//        let selectedContentId = stories[tableView.indexPathForSelectedRow!.row].storyId
+//        model.getContent(selectedContentId!)
+//        
+//    }
+//    
 }
 

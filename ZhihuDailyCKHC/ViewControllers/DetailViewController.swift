@@ -6,88 +6,124 @@
 //
 
 import UIKit
-import WebKit
+//import WebKit
 //import HTMLKit
 
-class DetailViewController: UIViewController, WKNavigationDelegate, ContentModelDelegate {
+class DetailViewController: UIViewController, ContentModelDelegate {
+    
+//    private let webView: WKWebView = {
+//        let prefs = WKPreferences()
+//        prefs.javaScriptEnabled = true
+//        let config = WKWebViewConfiguration()
+//        config.preferences = prefs
+//        let v = WKWebView(frame: .zero, configuration: config)
+//        return v
+//    }()
 
     var selectedContentId: Int?
     
     var content: Content?
     var titleLabel: UILabel!
-    var dateLabel: UILabel!
-    var webView: WKWebView!
-    var textView: UITextView!
+    
+    public lazy var stretchyHeaderView: DetailStretchyHeaderView = {
+        let v = DetailStretchyHeaderView()
+        v.translatesAutoresizingMaskIntoConstraints = false
+        return v
+    }()
+    
+    public lazy var textView: UITextView = {
+        let v = UITextView()
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.text = content?.body
+        return v
+    }()
     
     var model = Model()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        model.getContent(selectedContentId ?? 0)
+        model.contentModelDelegate = self
+        model.getContent(selectedContentId!)
+        setupView()
+        setupImage(content)
+//        setupText(content)
     }
     
-// MARK: - Model Delegate Methods
+    func setupView() {
+        view.backgroundColor = .white
+//        webView.navigationDelegate = self
+//        view.addSubview(webView)
+        view.addSubview(stretchyHeaderView)
+        view.addSubview(textView)
+        setupConstraints()
+    }
+    func setupConstraints() {
+        NSLayoutConstraint.activate([
+            
+            stretchyHeaderView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            stretchyHeaderView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            stretchyHeaderView.topAnchor.constraint(equalTo: view.topAnchor),
+            stretchyHeaderView.heightAnchor.constraint(equalToConstant: Constants.SCREEN.width),
+            
+            textView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            textView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            textView.topAnchor.constraint(equalTo: stretchyHeaderView.bottomAnchor, constant: 8),
+            textView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
+    // MARK: - Model Delegate Methods
         
     func ContentFetched(_ content: Content) {
         self.content = content
     }
     
+    // MARK: - Setup Page Content
     
+    func setupImage(_ content: Content?){
+        
+        self.content = content
+        
+        guard self.content?.image != "" else { return }
+        if let cachedData = CacheManager.getStoryCache(self.content!.image ?? "") {
+            self.stretchyHeaderView.imageView.image = UIImage(data: cachedData)
+        }
+        let url = URL(string: self.content!.image ?? "https://www.notion.so/corsoncheung/97416469544f4c398415b160cd685394#ae76aac48a5a43328b8da2e1b3851bc7")
+        let session = URLSession.shared
+        let dataTask = session.dataTask(with: url!) { (data, response, error) in
+
+            if error == nil && data != nil {
+                CacheManager.setStoryCache(url!.absoluteString, data)
+                if url!.absoluteString != self.content?.image { return }
+                let image = UIImage(data: data!)
+                DispatchQueue.main.async {
+                    self.stretchyHeaderView.imageView.image = image
+                }
+
+            }
+        }
+        dataTask.resume()
+    }
     
+//    func setupText(_ content: Content?) {
+//
+//        self.content = content
+//
+//        let body = content?.body
+//
+//    }
+    
+    // MARK: - WebView Methods
+    
+//    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+//        webView.evaluateJavaScript("document.body.innerHTML") { result, error in
+//            guard let html = result as? String, error == nil else {
+//                return
+//            }
+//            let document = HTMLDocument(string: html)
+//
+//        }
+//    }
 }
 
-class StretchyTableHeaderView: UIView {
-    public let imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.clipsToBounds = true
-        imageView.contentMode = .scaleAspectFill
-        return imageView
-    }()
-    
-    private var imageViewHeight = NSLayoutConstraint()
-    private var imageViewBottom = NSLayoutConstraint()
-    private var containerView = UIView()
-    private var containerViewHeight = NSLayoutConstraint()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        createViews()
-        setViewConstraints()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func createViews() {
-        addSubview(containerView)
-        containerView.addSubview(imageView)
-    }
-    
-    func setViewConstraints() {
-        NSLayoutConstraint.activate([
-            widthAnchor.constraint(equalTo: containerView.widthAnchor),
-            centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            heightAnchor.constraint(equalTo: containerView.heightAnchor)
-        ])
-        
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.widthAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
-        containerViewHeight = containerView.heightAnchor.constraint(equalTo: self.heightAnchor)
-        containerViewHeight.isActive = true
-        
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageViewBottom = imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
-        imageViewBottom.isActive = true
-        imageViewHeight = imageView.heightAnchor.constraint(equalTo: containerView.heightAnchor)
-        imageViewHeight.isActive = true
-    }
-    
-    public func scrollViewDidScroll(scrollView: UIScrollView) {
-        containerViewHeight.constant = scrollView.contentInset.top
-        let offsetY = -(scrollView.contentOffset.y + scrollView.contentInset.top)
-        containerView.clipsToBounds = offsetY <= 0
-        imageViewBottom.constant = offsetY >= 0 ? 0 : -offsetY / 2
-        imageViewHeight.constant = max(offsetY + scrollView.contentInset.top, scrollView.contentInset.top)
-    }
-}
+

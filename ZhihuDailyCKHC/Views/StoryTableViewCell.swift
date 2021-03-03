@@ -19,14 +19,24 @@ class StoryTableViewCell: UITableViewCell {
        let v = UILabel()
         v.translatesAutoresizingMaskIntoConstraints = false
         v.numberOfLines = 0
+        v.textAlignment = .left
         return v
     }()
-        
+    
+    private lazy var authorLabel: UILabel = {
+       let v = UILabel()
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.numberOfLines = 0
+        v.textColor = .systemGray
+        v.textAlignment = .left
+        return v
+    }()
+    
     var story: StoryInformation?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        selectionStyle = .none
+        selectionStyle = .default
         setupView()
     }
     
@@ -36,6 +46,7 @@ class StoryTableViewCell: UITableViewCell {
     
     func setupView() {
         addSubview(titleLabel)
+        addSubview(authorLabel)
         addSubview(thumbnailImageView)
         setupConstraints()
     }
@@ -43,15 +54,21 @@ class StoryTableViewCell: UITableViewCell {
     func setupConstraints() {
         NSLayoutConstraint.activate([
             
-            thumbnailImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            thumbnailImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            thumbnailImageView.topAnchor.constraint(equalTo: topAnchor),
-            thumbnailImageView.heightAnchor.constraint(equalToConstant: 200),
+            thumbnailImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            thumbnailImageView.topAnchor.constraint(equalTo: topAnchor,constant: 16),
+            thumbnailImageView.bottomAnchor.constraint(equalTo: bottomAnchor,constant: -16),
+            thumbnailImageView.heightAnchor.constraint(equalToConstant: 100),
+            thumbnailImageView.widthAnchor.constraint(equalToConstant: 100),
             
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 16),
-            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor,constant: -16),
-            titleLabel.topAnchor.constraint(equalTo: thumbnailImageView.bottomAnchor,constant: 8),
-            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor,constant: -16)
+            titleLabel.trailingAnchor.constraint(equalTo: thumbnailImageView.leadingAnchor,constant: -16),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            titleLabel.bottomAnchor.constraint(equalTo: authorLabel.topAnchor),
+            
+            authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            authorLabel.trailingAnchor.constraint(equalTo: thumbnailImageView.leadingAnchor, constant: -20),
+            authorLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor),
+            authorLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
         ])
     }
     
@@ -67,8 +84,11 @@ class StoryTableViewCell: UITableViewCell {
         self.story = s
         guard story != nil else { return }
         
-        // MARK: - Setup Title for TableViewCell
+        // MARK: - Setup Text for TableViewCell
+        
         self.titleLabel.text = story?.title ?? "标题缺失"
+        self.titleLabel.font = .systemFont(ofSize: 20, weight: .light)
+        self.authorLabel.text = story?.hint ?? ""
         
         // MARK: - Setup Image for TableViewCell
         
