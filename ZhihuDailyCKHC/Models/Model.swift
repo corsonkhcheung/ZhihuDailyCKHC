@@ -7,7 +7,11 @@
 
 import Foundation
 
-protocol FeedModelDelegate { func FeedFetched(_ stories: [StoryInformation]) }
+protocol FeedModelDelegate {
+    func asignToStoriesFromFeedFetched(_ stories: [StoryInformation])
+    func asignToTopStoriesFromFeedFetched(_ stories: [StoryInformation])
+    func asignToStoriesFromPreviousFeedFetched(_ newStories: [StoryInformation])
+}
 protocol ContentModelDelegate { func ContentFetched(_ content: Content) }
 
 class Model {
@@ -21,64 +25,95 @@ class Model {
         let dataTask = session.dataTask(with: url!) { (data, response, error) in
             if error != nil || data == nil { return }
             do {
-                
+                 
                 let decoder = JSONDecoder()
-                let converter = DateFormatter()
-                converter.dateFormat = "yyyymmdd"
-                decoder.dateDecodingStrategy = .formatted(converter)
                 let response = try decoder.decode(Response.self, from: data!)
                 if response.stories != nil {
                     DispatchQueue.main.async {
-                        self.feedModelDelegate?.FeedFetched(response.stories!)
-//                        self.storyInformationFetched = response.stories!
+                        self.feedModelDelegate?.asignToStoriesFromFeedFetched(response.stories!)
+                        self.feedModelDelegate?.asignToTopStoriesFromFeedFetched(response.topStories!)
                     }
                 }
                 dump(response)
             } catch {
-                dump(response)
                 print(error)
             }
         }
         dataTask.resume()
+        
+        let currentDate = Date()
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        let dateString = formatter.string(from: currentDate)
+        let dateSubstrings: [Substring] = dateString.split(separator: "/")
+        let dateComponent: [String] = dateSubstrings.compactMap { "\($0)" }
+        
+        var month: String
+        if Int(dateComponent[0])! >= 10 {
+            month = dateComponent[0]
+        } else {
+            month = "0\(dateComponent[0])"
+        }
+        var date: String
+        if Int(dateComponent[1])! >= 10 {
+            date = dateComponent[1]
+        } else {
+            date = "0\(dateComponent[1])"
+        }
+        
+        let urlForPreviousDates = URL(string: "\(Constants.PREVIOUS_NEWS)20\(dateComponent[2])\(month)\(date)?r=\(Int.random(in: 1...999999))")
+        guard urlForPreviousDates != nil else { return }
+        
+        var requestForPreviousDates = URLRequest(url: url!, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 30)
+        requestForPreviousDates.addValue(Constants.NO_STORE_HEADER, forHTTPHeaderField: "Cache-Control")
+        requestForPreviousDates.httpMethod = "GET"
+        
+        let sessionForPreviousDates = URLSession.shared
+        let dataTaskForPreviousDates = sessionForPreviousDates.dataTask(with: requestForPreviousDates) { (data, response, error) in
+            if error != nil || data == nil { return }
+            do {
+
+                let decoder = JSONDecoder()
+                let response = try decoder.decode(Response.self, from: data!)
+                if response.stories != nil {
+                    DispatchQueue.main.async {
+                        self.feedModelDelegate?.asignToStoriesFromPreviousFeedFetched(response.stories!)
+                    }
+                }
+                dump(response)
+            } catch {
+                print(error)
+            }
+        }
+        dataTaskForPreviousDates.resume()
     }
     
     func getContent(_ selectedContentId: Int) {
-        let url = URL(string: "\(Constants.LATEST_NEWS) + \(String(selectedContentId))")
+        let url = URL(string: "\(Constants.LATEST_NEWS_CONTENT)\(String(selectedContentId))?r=\(Int.random(in: 1...999999))")
         guard url != nil else { return }
+        
+        var request = URLRequest(url: url!, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 30)
+        request.addValue(Constants.NO_STORE_HEADER, forHTTPHeaderField: "Cache-Control")
+        request.httpMethod = "GET"
+        
         let session = URLSession.shared
-        let dataTask = session.dataTask(with: url!) { (data, response, error) in
-            if error != nil || data == nil { return }
+        let dataTask = session.dataTask(with: request) { (JSONdata, response, error) in
+            if error != nil || JSONdata == nil { return }
             do {
                 
-                let decoder = JSONDecoder()
-                let response = try decoder.decode(Content.self, from: data!)
-                if response.body != nil {
+                let newJSONdecoder = JSONDecoder()
+                let result: Optional = try newJSONdecoder.decode(Content.self, from: JSONdata!)
+                if result != nil {
                     DispatchQueue.main.async {
-                        self.contentModelDelegate?.ContentFetched(response)
+                        self.contentModelDelegate?.ContentFetched(result!)
                     }
                 }
-                dump(response)
+                dump(result)
             } catch {
-                dump(response)
                 print(error)
             }
         }
         dataTask.resume()
     }
-    
-//    func getImage(url: String, completion: @escaping (Data?) -> Void) {
-//        guard let url = URL(string: Content.image?[0] ?? "") else { completion(nil) }
-//
-//        if let cachedImage = CacheManager.imageCache.object(forKey: NSString(string: Content.image?[0] ?? "")) {
-//            completion(cachedImage as Data)
-//        } else {
-//            URLSession.shared.dataTask(with: Content.image?[0] ?? "") { (data, response, error) in
-//                guard error == nil, let data = data else { completion(nil) }
-//                CacheManager.imageCache.setObject(data as NSData, forKey: NSString(string: Content.image?[0] ?? ""))
-//                completion(data)
-//            }.resume()
-//
-//        }
-//    }
     
 }

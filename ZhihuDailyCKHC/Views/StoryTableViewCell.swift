@@ -19,14 +19,24 @@ class StoryTableViewCell: UITableViewCell {
        let v = UILabel()
         v.translatesAutoresizingMaskIntoConstraints = false
         v.numberOfLines = 0
+        v.textAlignment = .justified
         return v
     }()
-        
+    
+    private lazy var authorLabel: UILabel = {
+       let v = UILabel()
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.numberOfLines = 0
+        v.textColor = .systemGray
+        v.textAlignment = .justified
+        return v
+    }()
+    
     var story: StoryInformation?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        selectionStyle = .none
+        selectionStyle = .default
         setupView()
     }
     
@@ -36,6 +46,7 @@ class StoryTableViewCell: UITableViewCell {
     
     func setupView() {
         addSubview(titleLabel)
+        addSubview(authorLabel)
         addSubview(thumbnailImageView)
         setupConstraints()
     }
@@ -43,15 +54,21 @@ class StoryTableViewCell: UITableViewCell {
     func setupConstraints() {
         NSLayoutConstraint.activate([
             
-            thumbnailImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            thumbnailImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            thumbnailImageView.topAnchor.constraint(equalTo: topAnchor),
-            thumbnailImageView.heightAnchor.constraint(equalToConstant: 200),
+            thumbnailImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            thumbnailImageView.topAnchor.constraint(equalTo: topAnchor,constant: 16),
+            thumbnailImageView.bottomAnchor.constraint(equalTo: bottomAnchor,constant: -16),
+            thumbnailImageView.heightAnchor.constraint(equalToConstant: 100),
+            thumbnailImageView.widthAnchor.constraint(equalToConstant: 100),
             
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 16),
-            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor,constant: -16),
-            titleLabel.topAnchor.constraint(equalTo: thumbnailImageView.bottomAnchor,constant: 8),
-            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor,constant: -16)
+            titleLabel.trailingAnchor.constraint(equalTo: thumbnailImageView.leadingAnchor,constant: -16),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            titleLabel.bottomAnchor.constraint(equalTo: authorLabel.topAnchor),
+            
+            authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            authorLabel.trailingAnchor.constraint(equalTo: thumbnailImageView.leadingAnchor, constant: -20),
+            authorLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor),
+            authorLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
         ])
     }
     
@@ -62,13 +79,16 @@ class StoryTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
-    func SetUpCell(_ s:StoryInformation?) {
+    func setupCell(_ s:StoryInformation?) {
         
         self.story = s
         guard story != nil else { return }
         
-        // MARK: - Setup Title for TableViewCell
+        // MARK: - Setup Text for TableViewCell
+        
         self.titleLabel.text = story?.title ?? "标题缺失"
+        self.titleLabel.font = .systemFont(ofSize: 20, weight: .light)
+        self.authorLabel.text = story?.hint ?? ""
         
         // MARK: - Setup Image for TableViewCell
         
@@ -76,7 +96,7 @@ class StoryTableViewCell: UITableViewCell {
         if let cachedData = CacheManager.getStoryCache(self.story!.images?[0] ?? "") {
             self.thumbnailImageView.image = UIImage(data: cachedData)
         }
-        let url = URL(string: self.story!.images?[0] ?? "https://www.notion.so/corsoncheung/97416469544f4c398415b160cd685394#ae76aac48a5a43328b8da2e1b3851bc7")
+        let url = URL(string: self.story!.images?[0] ?? Constants.FILLER_IMAGE)
         let session = URLSession.shared
         let dataTask = session.dataTask(with: url!) { (data, response, error) in
 

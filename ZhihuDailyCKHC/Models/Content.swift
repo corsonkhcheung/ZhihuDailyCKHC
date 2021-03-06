@@ -13,6 +13,7 @@
 import Foundation
 
 // MARK: - Content
+
 struct Content: Codable {
     let body, imageHue, imageSource, title: String?
     let url: String?
