@@ -19,7 +19,11 @@ class StoryTableViewCell: UITableViewCell {
        let v = UILabel()
         v.translatesAutoresizingMaskIntoConstraints = false
         v.numberOfLines = 0
+<<<<<<< HEAD
         v.textAlignment = .justified
+=======
+        v.textAlignment = .left
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
         return v
     }()
     
@@ -28,7 +32,11 @@ class StoryTableViewCell: UITableViewCell {
         v.translatesAutoresizingMaskIntoConstraints = false
         v.numberOfLines = 0
         v.textColor = .systemGray
+<<<<<<< HEAD
         v.textAlignment = .justified
+=======
+        v.textAlignment = .left
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
         return v
     }()
     

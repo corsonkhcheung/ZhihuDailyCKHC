@@ -40,6 +40,7 @@ class Model {
             }
         }
         dataTask.resume()
+<<<<<<< HEAD
         
         let currentDate = Date()
         let formatter = DateFormatter()
@@ -86,6 +87,30 @@ class Model {
             }
         }
         dataTaskForPreviousDates.resume()
+=======
+//        let urlForPreviousDates = URL(string: Constants.LATEST_NEWS)
+//        guard urlForPreviousDates != nil else { return }
+//        let sessionForPreviousDates = URLSession.shared
+//        let dataTaskForPreviousDates = sessionForPreviousDates.dataTask(with: urlForPreviousDates!) { (data, response, error) in
+//            if error != nil || data == nil { return }
+//            do {
+//
+//                let decoder = JSONDecoder()
+//                let response = try decoder.decode(Response.self, from: data!)
+//                if response.stories != nil {
+//                    DispatchQueue.main.async {
+//                        self.feedModelDelegate?.FeedFetched(response.stories!)
+////                        self.storyInformationFetched = response.stories!
+//                    }
+//                }
+//                dump(response)
+//            } catch {
+//                dump(response)
+//                print(error)
+//            }
+//        }
+//        dataTaskForPreviousDates.resume()
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
     }
     
     func getContent(_ selectedContentId: Int) {
@@ -97,6 +122,7 @@ class Model {
         request.httpMethod = "GET"
         
         let session = URLSession.shared
+<<<<<<< HEAD
         let dataTask = session.dataTask(with: request) { (JSONdata, response, error) in
             if error != nil || JSONdata == nil { return }
             do {
@@ -106,6 +132,17 @@ class Model {
                 if result != nil {
                     DispatchQueue.main.async {
                         self.contentModelDelegate?.ContentFetched(result!)
+=======
+        let dataTask = session.dataTask(with: request) { (data, response, error) in
+            if error != nil || data == nil { return }
+            do {
+                
+                let decoder = JSONDecoder()
+                let response: Optional = try decoder.decode(Content.self, from: data!)
+                if response != nil {
+                    DispatchQueue.main.async {
+                        self.contentModelDelegate?.ContentFetched(response!)
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
                     }
                 }
                 dump(result)
@@ -116,4 +153,22 @@ class Model {
         dataTask.resume()
     }
     
+<<<<<<< HEAD
+=======
+//    let request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 30)
+//    let session = URLSession.shared
+//    let dataTask = session.dataTask(with: request) { (data, respons, error) in
+//
+//        print(error as Any)
+//        if data == nil {return}
+//        if response == nil {return}
+//
+//        let str = "id=10&name=wangwuhua"
+//        let data = str.data(using: .utf8)
+//        request.httpBody = data
+//    }
+//    dataTask.resume()
+
+    
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
 }

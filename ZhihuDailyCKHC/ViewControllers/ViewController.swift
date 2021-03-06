@@ -13,6 +13,7 @@ class ViewController: UIViewController,
                       UIScrollViewDelegate,
                       FeedModelDelegate {
     
+<<<<<<< HEAD
     let detailPage = DetailViewController()
     
     public lazy var headerView = HeaderView()
@@ -22,6 +23,9 @@ class ViewController: UIViewController,
 //        v.translatesAutoresizingMaskIntoConstraints = false
 //        return v
 //    }()
+=======
+    public lazy var headerView = HeaderView()
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
     
     private lazy var tableView: UITableView = {
         let v = UITableView()
@@ -51,6 +55,11 @@ class ViewController: UIViewController,
         navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         model.feedModelDelegate = self
@@ -66,10 +75,21 @@ class ViewController: UIViewController,
         navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
+<<<<<<< HEAD
     // MARK: - Setup UI
     
     func setupView() {
         view.backgroundColor = .white
+=======
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: true)
+    }
+    
+    func setupView() {
+        view.backgroundColor = .white
+//        view.addSubview(headerView)
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
         view.addSubview(tableView)
 //        containerView.addSubview(collectionView)
         
@@ -78,6 +98,14 @@ class ViewController: UIViewController,
     func setupConstraints() {
         NSLayoutConstraint.activate([
             
+<<<<<<< HEAD
+=======
+//            headerView.leadingAnchor.constraint(equalTo: tableView.leadingAnchor, constant: 16),
+//            headerView.trailingAnchor.constraint(equalTo: tableView.trailingAnchor,constant: -16),
+//            headerView.topAnchor.constraint(equalTo: tableView.safeAreaLayoutGuide.topAnchor, constant: 10),
+//            headerView.heightAnchor.constraint(equalToConstant: Constants.SCREEN.width + 100),
+            
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
@@ -114,11 +142,16 @@ class ViewController: UIViewController,
         return cell
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+<<<<<<< HEAD
         let v = UIView(frame: CGRect(origin: CGPoint(x: Constants.SCREEN.width / 2, y: 0),size: CGSize(width: Constants.SCREEN.width, height: Constants.SCREEN.width + 120)))
+=======
+        let v = UIView(frame: CGRect(origin: CGPoint(x: Constants.SCREEN.width / 2, y: 0),size: CGSize(width: Constants.SCREEN.width, height: Constants.SCREEN.width + 100)))
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
         v.setNeedsLayout()
         v.layoutIfNeeded()
         v.translatesAutoresizingMaskIntoConstraints = false
         v.addSubview(headerView)
+<<<<<<< HEAD
 //        v.addSubview(containerView)
         v.addSubview(collectionView)
 //        v.addSubview(scrollView)
@@ -141,11 +174,22 @@ class ViewController: UIViewController,
 //            scrollView.trailingAnchor.constraint(equalTo: v.trailingAnchor),
 //            scrollView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
 //            scrollView.bottomAnchor.constraint(equalTo: v.bottomAnchor)
+=======
+        NSLayoutConstraint.activate([
+            headerView.leadingAnchor.constraint(equalTo: v.leadingAnchor, constant: 16),
+            headerView.trailingAnchor.constraint(equalTo: v.trailingAnchor,constant: -16),
+            headerView.topAnchor.constraint(equalTo: v.topAnchor, constant: 10),
+            headerView.bottomAnchor.constraint(equalTo: v.bottomAnchor,constant: -10)
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
         ])
         return v
     }
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+<<<<<<< HEAD
         Constants.SCREEN.width + 120
+=======
+        Constants.SCREEN.width + 50
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let detailPage = DetailViewController()
@@ -154,6 +198,7 @@ class ViewController: UIViewController,
         self.navigationController?.pushViewController(detailPage, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }
+<<<<<<< HEAD
     
     // MARK: - CollectionView Methods
     
@@ -312,5 +357,15 @@ class ViewController: UIViewController,
 //
 //
 //
+=======
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        let content: Content?
+//        guard tableView.indexPathForSelectedRow != nil else { return }
+//        let selectedContentId = stories[tableView.indexPathForSelectedRow!.row].storyId
+//        model.getContent(selectedContentId!)
+//        
+//    }
+//    
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
 }
 

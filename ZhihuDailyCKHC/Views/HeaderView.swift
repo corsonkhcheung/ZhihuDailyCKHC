@@ -7,6 +7,7 @@
 
 import UIKit
 
+<<<<<<< HEAD
 class HeaderView: UIView {
     
     private lazy var dateView: UILabel = {
@@ -25,6 +26,54 @@ class HeaderView: UIView {
     }()
     
     private lazy var headingLabel: UILabel = {
+=======
+class HeaderView: UIView, UICollectionViewDataSource, UICollectionViewDelegate, FeedModelDelegate {
+    
+    var model = Model()
+    var topStories = [StoryInformation]()
+    
+    private lazy var collectionViewForTopStories: UICollectionView = {
+        let v = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.dataSource = self
+        v.delegate = self
+        v.register(FeedPagerCollectionViewCell.self, forCellWithReuseIdentifier: Constants.PAGINGCELL_ID)
+        return v
+    }()
+    
+//    private lazy var titleLabelView: UILabel = {
+//        let v = UILabel()
+//        v.translatesAutoresizingMaskIntoConstraints = false
+//        v.font = v.font.withSize(32)
+//        v.numberOfLines = 0
+//        v.textColor = .gray
+//        return v
+//    }()
+    
+    private lazy var dateView: UILabel = {
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
+        let v = UILabel()
+        let currentDate = Date()
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        let dateString = formatter.string(from: currentDate)
+        v.translatesAutoresizingMaskIntoConstraints = false
+<<<<<<< HEAD
+        v.text = "知乎日报CKHC"
+        v.textAlignment = .left
+        v.font = v.font.withSize(32)
+        return v
+    }()
+    
+=======
+        v.font = v.font.withSize(20)
+        v.textColor = .gray
+        v.text = dateString
+        v.textAlignment = .left
+        return v
+    }()
+    
+    private lazy var headingLabel: UILabel = {
         let v = UILabel()
         v.translatesAutoresizingMaskIntoConstraints = false
         v.text = "知乎日报CKHC"
@@ -32,7 +81,16 @@ class HeaderView: UIView {
         v.font = v.font.withSize(32)
         return v
     }()
+
+//    private lazy var headerStackView: UIStackView = {
+//        let v = UIStackView(arrangedSubviews: [headingLabel, dateView])
+//        v.translatesAutoresizingMaskIntoConstraints = false
+//        v.axis = .horizontal
+//        v.alignment = .fill
+//        return v
+//    }()
     
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
     override init(frame: CGRect) {
         super.init(frame: .zero)
         translatesAutoresizingMaskIntoConstraints = false
@@ -44,6 +102,13 @@ class HeaderView: UIView {
     
     
     func setupView() {
+<<<<<<< HEAD
+=======
+        
+        addSubview(collectionViewForTopStories)
+//        addSubview(titleLabelView)
+//        addSubview(headerStackView)
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
         addSubview(dateView)
         addSubview(headingLabel)
         
@@ -54,6 +119,7 @@ class HeaderView: UIView {
         NSLayoutConstraint.activate([
             
             headingLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+<<<<<<< HEAD
             headingLabel.trailingAnchor.constraint(equalTo: dateView.leadingAnchor),
             headingLabel.topAnchor.constraint(equalTo: topAnchor),
 
@@ -65,4 +131,62 @@ class HeaderView: UIView {
     }
     
 
+=======
+            headingLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            headingLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+
+            dateView.topAnchor.constraint(equalTo: headingLabel.bottomAnchor),
+            dateView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            dateView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            
+//            headerStackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+//            headerStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+//            headerStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+//            headerStackView.heightAnchor.constraint(equalToConstant: 100),
+            
+            collectionViewForTopStories.leadingAnchor.constraint(equalTo: leadingAnchor),
+            collectionViewForTopStories.trailingAnchor.constraint(equalTo: trailingAnchor),
+            collectionViewForTopStories.topAnchor.constraint(equalTo: headingLabel.bottomAnchor),
+            
+//            titleLabelView.bottomAnchor.constraint(equalTo: collectionViewForTopStories.bottomAnchor)
+        ])
+    }
+    
+    // MARK: - Model Delegate Methods
+    func FeedFetched(_ stories: [StoryInformation]) {
+        self.topStories = stories
+        collectionViewForTopStories.reloadData()
+    }
+    
+    // MARK: - CollectionView Methods
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int { topStories.count }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.PAGINGCELL_ID, for: indexPath) as! FeedPagerCollectionViewCell
+        cell.backgroundColor = .red
+        return cell
+    }
+    
+    func createLayout() -> UICollectionViewCompositionalLayout {
+        let item = NSCollectionLayoutItem(
+            layoutSize: .init(
+                widthDimension: .fractionalWidth(1),
+                heightDimension: .fractionalHeight(1)
+            )
+        )
+        item.contentInsets.leading = 2
+        item.contentInsets.trailing = 2
+        item.contentInsets.bottom = 16
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: .init(
+                widthDimension: .fractionalWidth(1),
+                heightDimension: .absolute(300)
+            ),
+            subitems: [item]
+        )
+        let section = NSCollectionLayoutSection(group: group)
+        section.orthogonalScrollingBehavior = .paging
+        return UICollectionViewCompositionalLayout(section: section)
+    }
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
 }

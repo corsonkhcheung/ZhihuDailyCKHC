@@ -29,12 +29,20 @@ class FeedPagerCollectionViewCell: UICollectionViewCell {
        let v = UILabel()
         v.translatesAutoresizingMaskIntoConstraints = false
         v.numberOfLines = 0
+<<<<<<< HEAD
         v.textColor = .white
+=======
+        v.textColor = .systemGray
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
         v.textAlignment = .left
         return v
     }()
     
+<<<<<<< HEAD
 //    private lazy var shadowImageView = ShadowImageView()
+=======
+    private lazy var shadowImageView = ShadowImageView()
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
 
     var topStory: StoryInformation?
     
@@ -51,7 +59,11 @@ class FeedPagerCollectionViewCell: UICollectionViewCell {
 //        addSubview(shadowImageView)
         addSubview(imageView)
         addSubview(titleLabel)
+<<<<<<< HEAD
         addSubview(authorLabel)
+=======
+        addSubview(shadowImageView)
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
         setupConstraints()
     }
     
@@ -62,6 +74,7 @@ class FeedPagerCollectionViewCell: UICollectionViewCell {
             imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
             imageView.topAnchor.constraint(equalTo: topAnchor),
             imageView.heightAnchor.constraint(equalToConstant: Constants.SCREEN.width),
+<<<<<<< HEAD
             
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
@@ -75,6 +88,12 @@ class FeedPagerCollectionViewCell: UICollectionViewCell {
 //            shadowImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
 //            shadowImageView.topAnchor.constraint(equalTo: topAnchor),
 //            shadowImageView.bottomAnchor.constraint(equalTo: bottomAnchor)
+=======
+            
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 16),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor,constant: -16),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor,constant: -16)
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
         ])
     }
     
@@ -99,7 +118,11 @@ class FeedPagerCollectionViewCell: UICollectionViewCell {
         if let cachedData = CacheManager.getStoryCache(self.topStory!.image ?? "") {
             self.imageView.image = UIImage(data: cachedData)
         }
+<<<<<<< HEAD
         let url = URL(string: self.topStory!.image ?? Constants.FILLER_IMAGE)
+=======
+        let url = URL(string: self.topStory!.image ?? "https://www.notion.so/corsoncheung/97416469544f4c398415b160cd685394#ae76aac48a5a43328b8da2e1b3851bc7")
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
         let session = URLSession.shared
         let dataTask = session.dataTask(with: url!) { (data, response, error) in
 

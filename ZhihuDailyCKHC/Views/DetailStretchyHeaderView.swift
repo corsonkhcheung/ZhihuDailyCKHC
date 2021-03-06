@@ -12,7 +12,11 @@ class DetailStretchyHeaderView: UIView {
         let v = UIImageView()
         v.translatesAutoresizingMaskIntoConstraints = false
         v.clipsToBounds = true
+<<<<<<< HEAD
         v.contentMode = .scaleAspectFit
+=======
+        v.contentMode = .scaleAspectFill
+>>>>>>> 4bc9684ec38e57f13f7bfd9dd16280da59d843c2
         return v
     }()
     
